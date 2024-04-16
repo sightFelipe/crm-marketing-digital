@@ -43,7 +43,8 @@ public class LoginService {
         verifyEmailStructure(userRequest.getEmail());
         verifyPasswordStructure(userRequest.getPassword());
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userRequest.getEmail(), userRequest.getPassword());
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(userRequest.getEmail(), userRequest.getPassword());
         authenticationManager.authenticate(authToken);
 
         UserEntity userEntity = repository.findByEmail(userRequest.getEmail()).get();
