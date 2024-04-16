@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9adb0d95-88da-4e97-b76f-f10a9bb7a848" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/crm-marketing-digital" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/CrmMarketingDigitalBack2024Application.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/constants/endPoints/IEndPoints.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/constants/response/IResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/constants/tables/ITables.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/converter/Converter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/dto/Dto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/dto/login/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/dto/login/LoginResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/commons/helperMapper/HelperMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/exception/CustomErrorResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/exception/ErrorHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/model/Model.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/model/UserEntity/RoleEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/model/UserEntity/UserEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/repository/IRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/repository/user/IUserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/securityConfig/HttpSecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/securityConfig/SecurityBeansInjector.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/securityConfig/filter/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/service/Login/JwtService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/service/Login/LoginService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/service/Service.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/webApi/Controller.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/java/com/crmmarketingdigitalback2024/webApi/LoginController/LoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024/src/test/java/com/crmmarketingdigitalback2024/CrmMarketingDigitalBack2024ApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/CRM-Marketing-Digital-Back-2024" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2eZTum1i0qNcoEp3IcEhWJkjZrc" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/andre/Documents/CRM_VALHALLA/crm-marketing-digital&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9adb0d95-88da-4e97-b76f-f10a9bb7a848" name="Changes" comment="" />
+      <created>1712111325752</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1712111325752</updated>
+    </task>
+    <servers />
+  </component>
+</project>
