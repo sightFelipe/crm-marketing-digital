@@ -8,6 +8,10 @@ import com.crmmarketingdigitalback2024.commons.dto.user.UserDto;
 import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
 import lombok.extern.log4j.Log4j2;
+import com.crmmarketingdigitalback2024.model.user.UserEntity;
+import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -69,6 +73,7 @@ public class UserService {
         try {
             System.out.println("try");
             Optional<UserEntity> existeLogin = iUserRepository.findById(Long.valueOf(userDTO.getIdUser()));
+            Optional<UserEntity> existeLogin = iUserRepository.findById(userDTO.getIdUser());
             System.out.println("existe: " + existeLogin);
             if (existeLogin.isEmpty()) {
                 UserEntity userEntity = userConverter.convertUserDTOToUserEntity(userDTO);
@@ -98,6 +103,7 @@ public class UserService {
     {
         try{
         Optional<UserEntity> userExist = iUserRepository.findById(Long.valueOf(userDTO.getIdUser()));
+        Optional<UserEntity> userExist = iUserRepository.findById(userDTO.getIdUser());
         if(userExist.isPresent()) {
             UserEntity userEntity = userConverter.convertUserDTOToUserEntity(userDTO);
             iUserRepository.save(userEntity);
@@ -126,6 +132,7 @@ public class UserService {
     {
         try{
             Optional<UserEntity> userExist = iUserRepository.findById(Long.valueOf(userId));
+            Optional<UserEntity> userExist = iUserRepository.findById(userId);
             if(userExist.isPresent()) {
                 iUserRepository.delete(userExist.get());
                 return ResponseEntity.ok(GenericResponseDTO.builder()
