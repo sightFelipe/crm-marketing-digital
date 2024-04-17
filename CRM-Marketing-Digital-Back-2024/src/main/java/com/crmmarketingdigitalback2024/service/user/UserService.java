@@ -5,6 +5,9 @@ import com.crmmarketingdigitalback2024.commons.constants.response.user.IUserResp
 import com.crmmarketingdigitalback2024.commons.converter.user.UserConverter;
 import com.crmmarketingdigitalback2024.commons.dto.GenericResponseDTO;
 import com.crmmarketingdigitalback2024.commons.dto.user.UserDto;
+import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
+import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
+import lombok.extern.log4j.Log4j2;
 import com.crmmarketingdigitalback2024.model.user.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
 import lombok.extern.log4j.Log4j2;
@@ -69,6 +72,7 @@ public class UserService {
         System.out.println("entro al servicio");
         try {
             System.out.println("try");
+            Optional<UserEntity> existeLogin = iUserRepository.findById(Long.valueOf(userDTO.getIdUser()));
             Optional<UserEntity> existeLogin = iUserRepository.findById(userDTO.getIdUser());
             System.out.println("existe: " + existeLogin);
             if (existeLogin.isEmpty()) {
@@ -98,6 +102,7 @@ public class UserService {
     public ResponseEntity<GenericResponseDTO> updateUser(UserDto userDTO)
     {
         try{
+        Optional<UserEntity> userExist = iUserRepository.findById(Long.valueOf(userDTO.getIdUser()));
         Optional<UserEntity> userExist = iUserRepository.findById(userDTO.getIdUser());
         if(userExist.isPresent()) {
             UserEntity userEntity = userConverter.convertUserDTOToUserEntity(userDTO);
@@ -126,6 +131,7 @@ public class UserService {
     public ResponseEntity<GenericResponseDTO> deleteUser(Integer userId)
     {
         try{
+            Optional<UserEntity> userExist = iUserRepository.findById(Long.valueOf(userId));
             Optional<UserEntity> userExist = iUserRepository.findById(userId);
             if(userExist.isPresent()) {
                 iUserRepository.delete(userExist.get());
