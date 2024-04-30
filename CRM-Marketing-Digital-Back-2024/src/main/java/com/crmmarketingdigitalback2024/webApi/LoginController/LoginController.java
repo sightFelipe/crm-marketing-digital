@@ -44,12 +44,12 @@ public class LoginController {
         return new ResponseEntity<>(service.getUsers(user), HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @GetMapping("/getAll")
-//    public ResponseEntity<List<UserEntity>> getAllUsers() {
-//        List<UserEntity> users = service.getAllUsers();
-//        return new ResponseEntity<>(users, HttpStatus.OK);
-//    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getAll")
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+       List<UserEntity> users = service.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 
     @PreAuthorize("permitAll")
     @PostMapping("/register")
