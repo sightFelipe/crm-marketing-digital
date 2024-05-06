@@ -10,7 +10,7 @@ public interface IUserService {
 
     String validatePasswordResetToken(String token);
 
-    UserEntity findUserByPasswordToken(String token);
+    Optional<UserEntity> findUserByPasswordToken(String token);
 
     void createPasswordResetTokenForUser(UserEntity user, String passwordResetToken);
 

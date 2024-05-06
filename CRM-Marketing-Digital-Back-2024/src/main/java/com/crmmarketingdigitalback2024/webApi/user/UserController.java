@@ -145,7 +145,7 @@ public class UserController {
             return "The password reset token has already been used";
         }
 
-        Optional<UserEntity> theUser = Optional.ofNullable(userService.findUserByPasswordToken(token));
+        Optional<UserEntity> theUser = userService.findUserByPasswordToken(token);
         if (theUser.isPresent()) {
             userService.changePassword(theUser.get(), passwordRequestUtil.getNewPassword());
 

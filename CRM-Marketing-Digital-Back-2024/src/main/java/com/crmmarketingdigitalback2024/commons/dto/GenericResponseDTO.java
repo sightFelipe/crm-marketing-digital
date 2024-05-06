@@ -16,4 +16,6 @@ public class GenericResponseDTO implements Serializable {
     public int objectId;
     public int statusCode;
 
+    public GenericResponseDTO(String userDeletedSuccessfully, boolean b) {
+    }
 }

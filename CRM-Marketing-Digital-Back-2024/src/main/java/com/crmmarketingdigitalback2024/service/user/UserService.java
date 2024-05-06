@@ -9,6 +9,8 @@ import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
 import com.crmmarketingdigitalback2024.repository.user.PasswordResetTokenRepository;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,23 +19,30 @@ import java.util.List;
 import java.util.Optional;
 
 
+
 @Log4j2
 @Service
 public class UserService implements IUserService {
-    private final IUserRepository iUserRepository;
-    private final UserConverter userConverter;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
-    private final PasswordResetTokenService passwordResetTokenService;
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private  IUserRepository iUserRepository;
 
-    public UserService(IUserRepository iUserRepository, UserConverter userConverter, PasswordResetTokenRepository verificationTokenRepository, PasswordResetTokenRepository passwordResetTokenRepository, PasswordResetTokenService passwordResetTokenService, PasswordEncoder passwordEncoder) {
-        this.iUserRepository = iUserRepository;
-        this.userConverter = userConverter;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
-        this.passwordResetTokenService = passwordResetTokenService;
-        this.passwordEncoder = passwordEncoder;
-    }
+
+    @Autowired
+    private  UserConverter userConverter;
+
+
+    @Autowired
+    private  PasswordResetTokenRepository passwordResetTokenRepository;
+
+
+    @Autowired
+    private  PasswordResetTokenService passwordResetTokenService;
+
+
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
+
 
     public ResponseEntity<GenericResponseDTO> serviceUser(UserDto userDTO) {
         try {
@@ -181,8 +190,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserEntity findUserByPasswordToken(String token) {
-        return passwordResetTokenService.findUserByPasswordToken(token).get();
+    public Optional<UserEntity> findUserByPasswordToken(String token) {
+        return passwordResetTokenService.findUserByPasswordToken(token);
     }
 
 }
