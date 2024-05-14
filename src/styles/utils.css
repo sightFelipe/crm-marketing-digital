@@ -1,0 +1,119 @@
+.d-flex{
+    display: flex;
+}
+.d-block{
+    display: block;
+}
+.flex-direction-column{
+    flex-direction: column;
+}
+.space-between{
+    justify-content: space-between;
+}
+.justify-center{
+    justify-content: center;
+}
+.align-self-end{
+    align-self: end;
+}
+.align-items{
+    align-items: center;
+}
+
+.text-xs{
+    font-size: 12px;
+}
+.text-sm{
+    font-size: 14px;
+}
+.text-base{
+    font-size: 16px;
+}
+.text-lg{
+    font-size: 18px;
+}
+.text-xl{
+    font-size: 20px;
+}
+.text-2xl{
+    font-size: 24px;
+}
+.text-3xl{
+    font-size: 30px;
+}
+.text-4xl{
+    font-size: 36px;
+}
+.text-5xl{
+    font-size: 40px;
+}
+.text-6xl{
+    font-size: 48px;
+}
+.text-7xl{
+    font-size: 64px;
+}
+
+.font-thin{
+    font-weight: 100;
+}
+.font-extralight{
+    font-weight: 200;
+}
+.font-light{
+    font-weight: 300;
+}
+.font-Regular{
+    font-weight: 400;
+}
+.font-Medium{
+    font-weight: 500;
+}
+.font-SemiBold{
+    font-weight: 600;
+}
+.font-Bold{
+    font-weight: 700;
+}
+.font-extraBold{
+    font-weight: 800;
+}
+.font-Black{
+    font-weight: 900;
+}
+.font-roboto {
+    font-family: 'Roboto', sans-serif;
+  }
+.w-100 {
+    width: 100%;
+}
+.w-75 {
+    width: 75%;
+}
+.w-50 {
+    width: 50%;
+}
+.w-25 {
+    width: 25%;
+}
+.h-100 {
+    height: 100%;
+}
+.position-relative {
+    position: relative;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.overflow-y-scroll {
+    overflow-y: scroll !important;
+}
+.text-center {
+    text-align: center;
+}
+.text-left {
+    text-align: left;
+}
+.text-right {
+    text-align: right;
+}
