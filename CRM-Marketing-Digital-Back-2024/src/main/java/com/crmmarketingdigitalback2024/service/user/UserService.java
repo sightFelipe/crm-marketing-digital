@@ -257,4 +257,5 @@ public class UserService implements IUserService {
     public Optional<UserEntity> findUserByPasswordToken(String token) {
         return passwordResetTokenService.findUserByPasswordToken(token);
     }
+
 }

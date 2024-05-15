@@ -1,4 +1,5 @@
 package com.crmmarketingdigitalback2024.commons.dto.user;
+
 import com.crmmarketingdigitalback2024.model.UserEntity.RoleEntity;
 import jakarta.persistence.Column;
 import lombok.Data;
