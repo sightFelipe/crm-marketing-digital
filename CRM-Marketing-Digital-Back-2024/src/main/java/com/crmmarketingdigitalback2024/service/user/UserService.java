@@ -5,43 +5,52 @@ import com.crmmarketingdigitalback2024.commons.constants.response.user.IUserResp
 import com.crmmarketingdigitalback2024.commons.converter.user.UserConverter;
 import com.crmmarketingdigitalback2024.commons.dto.GenericResponseDTO;
 import com.crmmarketingdigitalback2024.commons.dto.user.UserDto;
+import com.crmmarketingdigitalback2024.commons.listener.RegistrationCompleteEventListener;
+import com.crmmarketingdigitalback2024.commons.util.PasswordRequestUtil;
+import com.crmmarketingdigitalback2024.model.UserEntity.PasswordResetTokenEntity;
 import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
 import com.crmmarketingdigitalback2024.repository.user.PasswordResetTokenRepository;
+import com.crmmarketingdigitalback2024.repository.user.TokenGenerator;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.UUID;
 
 
 @Log4j2
 @Service
 public class UserService implements IUserService {
+    private final IUserRepository iUserRepository;
+    private final UserConverter userConverter;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordResetTokenService passwordResetTokenService;
+    private final JavaMailSender mailSender;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private  IUserRepository iUserRepository;
+    private final TokenGenerator tokenGenerator;
 
+    public UserService(IUserRepository iUserRepository, UserConverter userConverter, PasswordResetTokenRepository verificationTokenRepository, PasswordResetTokenRepository passwordResetTokenRepository, PasswordResetTokenService passwordResetTokenService, JavaMailSender mailSender, PasswordEncoder passwordEncoder, TokenGenerator tokenGenerator) {
+        this.iUserRepository = iUserRepository;
+        this.userConverter = userConverter;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.passwordResetTokenService = passwordResetTokenService;
+        this.mailSender = mailSender;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenGenerator = tokenGenerator;
 
-    @Autowired
-    private  UserConverter userConverter;
-
-
-    @Autowired
-    private  PasswordResetTokenRepository passwordResetTokenRepository;
-
-
-    @Autowired
-    private  PasswordResetTokenService passwordResetTokenService;
-
-
-    @Autowired
-    private  PasswordEncoder passwordEncoder;
+    }
 
 
     public ResponseEntity<GenericResponseDTO> serviceUser(UserDto userDTO) {
@@ -166,6 +175,61 @@ public class UserService implements IUserService {
                     .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .build(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public String resetPasswordRequest(PasswordRequestUtil passwordRequestUtil, HttpServletRequest servletRequest)
+            throws MessagingException, UnsupportedEncodingException {
+        Optional<UserEntity> user = findByEmail(passwordRequestUtil.getEmail());
+        String passwordResetUrl = "";
+        if (user.isPresent()) {
+            String passwordResetToken = tokenGenerator.generateToken();
+            createPasswordResetTokenForUser(user.get(), passwordResetToken);
+
+            passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(servletRequest), passwordResetToken);
+        }
+        return passwordResetUrl;
+    }
+
+    public String resetPassword(PasswordRequestUtil passwordRequestUtil, String token) {
+        String tokenVerificationResult = validatePasswordResetToken(token);
+        if (!tokenVerificationResult.equalsIgnoreCase("valid")) {
+            return "Invalid password reset token";
+        }
+
+        if (passwordResetTokenService.isPasswordResetTokenUsed(token)) {
+            return "The password reset token has already been used";
+        }
+
+        Optional<UserEntity> theUser = findUserByPasswordToken(token);
+        if (theUser.isPresent()) {
+            UserEntity userEntity = theUser.get();
+            changePassword(userEntity, passwordRequestUtil.getNewPassword());
+
+            PasswordResetTokenEntity passwordResetToken = passwordResetTokenService.findPasswordResetToken(token);
+            passwordResetToken.setUsed(true);
+            passwordResetTokenRepository.save(passwordResetToken);
+
+            return "Password has been reset successfully";
+        }
+
+        return "Invalid password reset token";
+    }
+
+    private String passwordResetEmailLink(UserEntity user, String applicationUrl, String passwordToken)
+            throws MessagingException, UnsupportedEncodingException {
+        String url = applicationUrl + "/register/reset-password?token=" + passwordToken;
+
+        RegistrationCompleteEventListener eventListener = new RegistrationCompleteEventListener(mailSender);
+        eventListener.setTheUser(user);
+        eventListener.sendPasswordResetVerificationEmail(url);
+
+        log.info("Click the link to reset your password: {}", url);
+        return url;
+    }
+
+    private String applicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":"
+                + request.getServerPort() + request.getContextPath();
     }
 
     public void changePassword(UserEntity theUser, String newPassword) {

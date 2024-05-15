@@ -117,62 +117,29 @@ public class UserController {
     }
 
 
+    @Operation(summary = "Solicitar Restablecimiento de Contraseña")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode  = "200", description = "Solicitud de restablecimiento de contraseña enviada exitosamente"),
+            @ApiResponse(responseCode  = "400", description = "Error en la solicitud de restablecimiento de contraseña",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))})})
     @PostMapping(IUserEndPoint.USER_PASSWORD_RESET_REQUEST)
     public String resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
                                        final HttpServletRequest servletRequest)
             throws MessagingException, UnsupportedEncodingException {
-
-        Optional<UserEntity> user = userService.findByEmail(passwordRequestUtil.getEmail());
-        String passwordResetUrl = "";
-        if (user.isPresent()) {
-            String passwordResetToken = UUID.randomUUID().toString();
-            userService.createPasswordResetTokenForUser(user.get(), passwordResetToken);
-
-            passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(servletRequest), passwordResetToken, mailSender);
-        }
-        return passwordResetUrl;
+        return userService.resetPasswordRequest(passwordRequestUtil,(servletRequest));
     }
 
+    @Operation(summary = "Restablecer Contraseña")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode  = "200", description = "Contraseña restablecida exitosamente"),
+            @ApiResponse(responseCode  = "400", description = "Error al restablecer la contraseña",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))})})
     @PostMapping(IUserEndPoint.USER_PASSWORD_RESET)
     public String resetPassword(@RequestBody PasswordRequestUtil passwordRequestUtil,
                                 @RequestParam("token") String token) {
-        String tokenVerificationResult = userService.validatePasswordResetToken(token);
-        if (!tokenVerificationResult.equalsIgnoreCase("valid")) {
-            return "Invalid password reset token";
-        }
-
-        if (passwordResetTokenService.isPasswordResetTokenUsed(token)) {
-            return "The password reset token has already been used";
-        }
-
-        Optional<UserEntity> theUser = userService.findUserByPasswordToken(token);
-        if (theUser.isPresent()) {
-            userService.changePassword(theUser.get(), passwordRequestUtil.getNewPassword());
-
-            PasswordResetTokenEntity passwordResetToken = passwordResetTokenService.findPasswordResetToken(token);
-            passwordResetToken.setUsed(true);
-            passwordResetTokenRepository.save(passwordResetToken);
-
-            return "Password has been reset successfully";
-        }
-
-        return "Invalid password reset token";
+        return userService.resetPassword(passwordRequestUtil, token);
     }
 
-    private String passwordResetEmailLink(UserEntity user, String applicationUrl, String passwordToken, JavaMailSender mailSender)
-            throws MessagingException, UnsupportedEncodingException {
-        String url = applicationUrl + "/register/reset-password?token=" + passwordToken;
-
-        RegistrationCompleteEventListener eventListener = new RegistrationCompleteEventListener(mailSender);
-        eventListener.setTheUser(user);
-        eventListener.sendPasswordResetVerificationEmail(url);
-
-        log.info("Click the link to reset your password: {}", url);
-        return url;
-    }
-
-    public String applicationUrl(HttpServletRequest request) {
-        return "http://"+request.getServerName()+":"
-                +request.getServerPort()+request.getContextPath();
-    }
 }
