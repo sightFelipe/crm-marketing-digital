@@ -7,6 +7,7 @@ import com.crmmarketingdigitalback2024.commons.dto.GenericResponseDTO;
 import com.crmmarketingdigitalback2024.commons.dto.user.UserDto;
 import com.crmmarketingdigitalback2024.commons.listener.RegistrationCompleteEventListener;
 import com.crmmarketingdigitalback2024.commons.util.PasswordRequestUtil;
+import com.crmmarketingdigitalback2024.exception.UserNotFoundException;
 import com.crmmarketingdigitalback2024.model.UserEntity.PasswordResetTokenEntity;
 import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
@@ -24,9 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.*;
 
 
 @Log4j2
@@ -41,6 +41,8 @@ public class UserService implements IUserService {
 
     private final TokenGenerator tokenGenerator;
 
+    private Map<Long, Boolean> userStatusMap;
+
     public UserService(IUserRepository iUserRepository, UserConverter userConverter, PasswordResetTokenRepository verificationTokenRepository, PasswordResetTokenRepository passwordResetTokenRepository, PasswordResetTokenService passwordResetTokenService, JavaMailSender mailSender, PasswordEncoder passwordEncoder, TokenGenerator tokenGenerator) {
         this.iUserRepository = iUserRepository;
         this.userConverter = userConverter;
@@ -49,6 +51,7 @@ public class UserService implements IUserService {
         this.mailSender = mailSender;
         this.passwordEncoder = passwordEncoder;
         this.tokenGenerator = tokenGenerator;
+        this.userStatusMap = new HashMap<>();
 
     }
 
@@ -258,4 +261,25 @@ public class UserService implements IUserService {
         return passwordResetTokenService.findUserByPasswordToken(token);
     }
 
+    public List<UserEntity> getActiveUsers() {
+        return iUserRepository.findByEnabledTrue();
+    }
+
+    public List<UserEntity> getDisabledUsers() {
+        return iUserRepository.findByEnabledFalse();
+    }
+
+    public void toggleUserStatus(Long id) throws UserNotFoundException {
+        Optional<UserEntity> optionalUser = iUserRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            UserEntity user = optionalUser.get();
+            boolean currentStatus = userStatusMap.getOrDefault(id, user.isEnabled());
+            user.setEnabled(!currentStatus);
+            iUserRepository.save(user);
+            userStatusMap.put(id, !currentStatus);
+        } else {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
+    }
 }

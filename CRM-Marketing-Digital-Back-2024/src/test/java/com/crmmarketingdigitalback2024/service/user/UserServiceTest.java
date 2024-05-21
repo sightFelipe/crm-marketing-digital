@@ -2,6 +2,7 @@ package com.crmmarketingdigitalback2024.service.user;
 
 import com.crmmarketingdigitalback2024.commons.listener.RegistrationCompleteEventListener;
 import com.crmmarketingdigitalback2024.commons.util.PasswordRequestUtil;
+import com.crmmarketingdigitalback2024.exception.UserNotFoundException;
 import com.crmmarketingdigitalback2024.model.UserEntity.PasswordResetTokenEntity;
 import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.IUserRepository;
@@ -22,10 +23,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.UnsupportedEncodingException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -42,7 +46,6 @@ public class UserServiceTest {
     private PasswordResetTokenEntity passwordResetTokenEntity;
     @Mock
     private PasswordRequestUtil passwordRequestUtil;
-
     @Mock
     private IUserRepository userRepository;
 
@@ -255,5 +258,63 @@ public class UserServiceTest {
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
         verify(passwordResetTokenService).findUserByPasswordToken(token);
+    }
+
+    @Test
+    public void testGetActiveUsers() {
+
+        UserEntity user1 = new UserEntity();
+        user1.setEnabled(true);
+        UserEntity user2 = new UserEntity();
+        user2.setEnabled(true);
+        List<UserEntity> expectedUsers = Arrays.asList(user1, user2);
+
+        when(userRepository.findByEnabledTrue()).thenReturn(expectedUsers);
+
+        List<UserEntity> actualUsers = userService.getActiveUsers();
+
+        assertEquals(expectedUsers, actualUsers);
+    }
+
+    @Test
+    public void testGetDisabledUsers() {
+        UserEntity user1 = new UserEntity();
+        user1.setEnabled(false);
+        UserEntity user2 = new UserEntity();
+        user2.setEnabled(false);
+        List<UserEntity> expectedUsers = Arrays.asList(user1, user2);
+
+        when(userRepository.findByEnabledFalse()).thenReturn(expectedUsers);
+
+        List<UserEntity> actualUsers = userService.getDisabledUsers();
+
+        assertEquals(expectedUsers, actualUsers);
+    }
+
+    @Test
+    public void testToggleUserStatus_UserExists() {
+
+        long userId = 1L;
+        UserEntity user = new UserEntity();
+        user.setEnabled(true);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+
+        assertDoesNotThrow(() -> userService.toggleUserStatus(userId));
+
+        assertFalse(user.isEnabled());
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    public void testToggleUserStatus_UserNotFound() {
+        long userId = 1L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.toggleUserStatus(userId));
+
+        verify(userRepository, never()).save(any());
     }
 }

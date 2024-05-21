@@ -7,7 +7,7 @@ import com.crmmarketingdigitalback2024.commons.dto.GenericResponseDTO;
 import com.crmmarketingdigitalback2024.commons.dto.user.UserDto;
 import com.crmmarketingdigitalback2024.commons.listener.RegistrationCompleteEventListener;
 import com.crmmarketingdigitalback2024.commons.util.PasswordRequestUtil;
-import com.crmmarketingdigitalback2024.model.UserEntity.PasswordResetTokenEntity;
+import com.crmmarketingdigitalback2024.exception.UserNotFoundException;
 import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.PasswordResetTokenRepository;
 import com.crmmarketingdigitalback2024.service.user.PasswordResetTokenService;
@@ -24,11 +24,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
-import java.util.UUID;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.List;
+
 
 @RestController
 @RequestMapping(IUserEndPoint.USER_BASE_URL)
@@ -140,6 +142,25 @@ public class UserController {
     public String resetPassword(@RequestBody PasswordRequestUtil passwordRequestUtil,
                                 @RequestParam("token") String token) {
         return userService.resetPassword(passwordRequestUtil, token);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(IUserEndPoint.ENABLED_USERS_URL)
+    public List<UserEntity> getActiveUsers() {
+        return userService.getActiveUsers();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(IUserEndPoint.DISABLED_USERS_URL)
+    public List<UserEntity> getDisabledUsers() {
+        return userService.getDisabledUsers();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(IUserEndPoint.TOGGLE_USER_STATUS)
+    public ResponseEntity<String> toggleUserStatus(@PathVariable Long id) throws UserNotFoundException {
+        userService.toggleUserStatus(id);
+        return ResponseEntity.ok("El cambio de estado ha sido realizado con éxito.");
     }
 
 }

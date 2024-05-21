@@ -30,7 +30,12 @@ public class UserEntity implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "id_rol")
     private RoleEntity role;
+    @Column(name = "enabled")
+    private boolean enabled;
 
+    public UserEntity() {
+        this.enabled = true;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -59,6 +64,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
