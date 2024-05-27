@@ -16,8 +16,6 @@ import com.crmmarketingdigitalback2024.repository.user.TokenGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
-import org.antlr.v4.runtime.Token;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.*;
 
 
@@ -269,17 +266,32 @@ public class UserService implements IUserService {
         return iUserRepository.findByEnabledFalse();
     }
 
-    public void toggleUserStatus(Long id) throws UserNotFoundException {
+    public void updateUserStatus(Long id, String newStatus) throws UserNotFoundException {
         Optional<UserEntity> optionalUser = iUserRepository.findById(id);
 
         if (optionalUser.isPresent()) {
             UserEntity user = optionalUser.get();
-            boolean currentStatus = userStatusMap.getOrDefault(id, user.isEnabled());
-            user.setEnabled(!currentStatus);
+            boolean currentStatus = user.isEnabled();
+
+            if (currentStatus && newStatus.equalsIgnoreCase("activo")) {
+                throw new IllegalArgumentException("El usuario ya está activo");
+            }
+
+            if (!currentStatus && newStatus.equalsIgnoreCase("inactivo")) {
+                throw new IllegalArgumentException("El usuario ya está inactivo");
+            }
+
+            if (newStatus.equalsIgnoreCase("activo")) {
+                user.setEnabled(true);
+            } else if (newStatus.equalsIgnoreCase("inactivo")) {
+                user.setEnabled(false);
+            } else {
+                throw new IllegalArgumentException("Estado no válido. Debe ser 'activo' o 'inactivo'");
+            }
+
             iUserRepository.save(user);
-            userStatusMap.put(id, !currentStatus);
         } else {
-            throw new UserNotFoundException("User not found with id: " + id);
+            throw new UserNotFoundException("Usuario no encontrado con el ID: " + id);
         }
     }
 }

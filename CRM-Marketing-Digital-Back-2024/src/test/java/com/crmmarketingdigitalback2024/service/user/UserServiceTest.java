@@ -292,29 +292,83 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testToggleUserStatus_UserExists() {
+    public void testUpdateUserStatus_ActiveUserToActiveStatus() throws UserNotFoundException {
+        Long userId = 1L;
+        String newStatus = "activo";
 
-        long userId = 1L;
         UserEntity user = new UserEntity();
         user.setEnabled(true);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        assertDoesNotThrow(() -> userService.toggleUserStatus(userId));
-
-        assertFalse(user.isEnabled());
-        verify(userRepository, times(1)).save(user);
+        assertThrows(IllegalArgumentException.class, () -> userService.updateUserStatus(userId, newStatus));
     }
 
     @Test
-    public void testToggleUserStatus_UserNotFound() {
-        long userId = 1L;
+    public void testUpdateUserStatus_InactiveUserToInactiveStatus() throws UserNotFoundException {
+        Long userId = 1L;
+        String newStatus = "inactivo";
 
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        UserEntity user = new UserEntity();
+        user.setEnabled(false);
 
-        assertThrows(UserNotFoundException.class, () -> userService.toggleUserStatus(userId));
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        verify(userRepository, never()).save(any());
+        assertThrows(IllegalArgumentException.class, () -> userService.updateUserStatus(userId, newStatus));
     }
+
+    @Test
+    public void testUpdateUserStatus_ActiveUserToInactiveStatus() throws UserNotFoundException {
+        Long userId = 1L;
+        String newStatus = "inactivo";
+
+        UserEntity user = new UserEntity();
+        user.setEnabled(true);
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        userService.updateUserStatus(userId, newStatus);
+
+        assertFalse(user.isEnabled());
+    }
+
+    @Test
+    public void testUpdateUserStatus_InactiveUserToActiveStatus() throws UserNotFoundException {
+        Long userId = 1L;
+        String newStatus = "activo";
+
+        UserEntity user = new UserEntity();
+        user.setEnabled(false);
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        userService.updateUserStatus(userId, newStatus);
+
+        assertTrue(user.isEnabled());
+    }
+
+    @Test
+    public void testUpdateUserStatus_InvalidStatus() {
+        Long userId = 1L;
+        String newStatus = "otro";
+
+        UserEntity user = new UserEntity();
+        user.setEnabled(false);
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        assertThrows(IllegalArgumentException.class, () -> userService.updateUserStatus(userId, newStatus));
+    }
+
+    @Test
+    public void testUpdateUserStatus_UserNotFound() {
+        Long userId = 1L;
+        String newStatus = "activo";
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.updateUserStatus(userId, newStatus));
+    }
+
+
 }

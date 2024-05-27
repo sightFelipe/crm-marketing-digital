@@ -7,6 +7,7 @@ import com.crmmarketingdigitalback2024.commons.dto.GenericResponseDTO;
 import com.crmmarketingdigitalback2024.commons.dto.user.UserDto;
 import com.crmmarketingdigitalback2024.commons.listener.RegistrationCompleteEventListener;
 import com.crmmarketingdigitalback2024.commons.util.PasswordRequestUtil;
+import com.crmmarketingdigitalback2024.exception.ErrorHandler;
 import com.crmmarketingdigitalback2024.exception.UserNotFoundException;
 import com.crmmarketingdigitalback2024.model.UserEntity.UserEntity;
 import com.crmmarketingdigitalback2024.repository.user.PasswordResetTokenRepository;
@@ -22,14 +23,17 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -46,11 +50,13 @@ public class UserController {
     private final PasswordResetTokenService passwordResetTokenService;
     private final RegistrationCompleteEventListener eventListener;
 
-    public UserController(UserService userService, PasswordResetTokenRepository passwordResetTokenRepository, PasswordResetTokenService passwordResetTokenService, RegistrationCompleteEventListener eventListener) {
+    private final ErrorHandler errorHandler;
+    public UserController(UserService userService, PasswordResetTokenRepository passwordResetTokenRepository, PasswordResetTokenService passwordResetTokenService, RegistrationCompleteEventListener eventListener, ErrorHandler errorHandler) {
         this.userService = userService;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.passwordResetTokenService = passwordResetTokenService;
         this.eventListener = eventListener;
+        this.errorHandler = errorHandler;
     }
     @Operation(summary = "Autenticacion de Usuario")
     @ApiResponses(value = {
@@ -158,9 +164,18 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(IUserEndPoint.TOGGLE_USER_STATUS)
-    public ResponseEntity<String> toggleUserStatus(@PathVariable Long id) throws UserNotFoundException {
-        userService.toggleUserStatus(id);
-        return ResponseEntity.ok("El cambio de estado ha sido realizado con éxito.");
+    public ResponseEntity<String> updateUserStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            String newStatus = request.get("status");
+            userService.updateUserStatus(id, newStatus);
+            return ResponseEntity.ok("Estado del usuario actualizado exitosamente");
+        } catch (AccessDeniedException e) {
+            return errorHandler.handleAccessDeniedException(e);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
